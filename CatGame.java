@@ -12,10 +12,7 @@ public class CatGame{
 		this.n = n;
 		FREEDOM = n*n;
 		marked = new boolean[n*n];
-		System.out.println(n);
 		s = getIndex(n/2,n/2);
-		System.out.println(s);
-		
 		G = new EdgeWeightedGraph(FREEDOM + 1);
 		for(int row = 1; row < n-1; row++){
 			for(int col = 1; col < n-1; col++){
@@ -23,8 +20,6 @@ public class CatGame{
 				G.addEdge(new CatEdge(v, v - 1));
 				G.addEdge(new CatEdge(v, v + 1));
 				G.addEdge(new CatEdge(v, v + n));
-				G.addEdge(new CatEdge(v, v + n + 1));
-				G.addEdge(new CatEdge(v, v - n + 1));
 				G.addEdge(new CatEdge(v, v - n));
 				marked[v] = false;
 			}

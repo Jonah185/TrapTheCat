@@ -48,8 +48,8 @@ void draw() {
 void mouseClicked() {
   int row = (int) Math.floor((mouseY / h));
   int col = (int) Math.floor((mouseX - ((row % 2) * w/2)) / w);
-  
+  int[] catloc = cg.getCatTile();
   if (row < 0 || row > n || col < 0 || col > n) return;
-  
+  if (row == catloc[0] && col == catloc[1]) return;
   cg.markTile(row, col);
 }
