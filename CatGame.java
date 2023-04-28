@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.DijkstraUndirectedSP;
 import edu.princeton.cs.algs4.EdgeWeightedGraph;
 import edu.princeton.cs.algs4.Edge;
+import java.util.Random;
 public class CatGame{
 	private int n;
 	private int FREEDOM;
@@ -8,6 +9,7 @@ public class CatGame{
 	boolean[] marked;
 	EdgeWeightedGraph G;
 	DijkstraUndirectedSP SP;
+  boolean CatIsTrapped = false;
 	public CatGame(int n){
 		this.n = n;
 		FREEDOM = n*n;
@@ -16,12 +18,20 @@ public class CatGame{
 		G = new EdgeWeightedGraph(FREEDOM + 1);
 		for(int row = 1; row < n-1; row++){
 			for(int col = 1; col < n-1; col++){
-				int v = getIndex(row, col);
-				G.addEdge(new CatEdge(v, v - 1));
-				G.addEdge(new CatEdge(v, v + 1));
-				G.addEdge(new CatEdge(v, v + n));
-				G.addEdge(new CatEdge(v, v - n));
-				marked[v] = false;
+            int v = getIndex(row, col);
+            G.addEdge(new CatEdge(v, v - 1));
+            G.addEdge(new CatEdge(v, v + 1));
+            G.addEdge(new CatEdge(v, v + n));
+            G.addEdge(new CatEdge(v, v - n));
+			if(row % 2 == 0){			
+				G.addEdge(new CatEdge(v, v + n - 1));
+				G.addEdge(new CatEdge(v, v - n - 1));
+			}
+			else{
+				G.addEdge(new CatEdge(v, v + n + 1));
+				G.addEdge(new CatEdge(v, v - n + 1));
+			}
+			marked[v] = false;
 			}
 		}
 		for(int i = 0; i < n; i++){
@@ -35,6 +45,11 @@ public class CatGame{
 			G.addEdge(new CatEdge(v, FREEDOM));
 			marked[v] = false;
 		}
+		Random rand = new Random();
+		int num = rand.nextInt(n);
+		for(int i = 0; i < n; i ++){
+			startMarkTile(rand.nextInt(n), rand.nextInt(n));
+		}
 		SP = new DijkstraUndirectedSP(G, s);
 	}
 	
@@ -45,11 +60,16 @@ public class CatGame{
 			c.changeWeight();
 		}
 		SP = new DijkstraUndirectedSP(G, s);
-		CatEdge e = (CatEdge) SP.pathTo(FREEDOM).iterator().next();
+    if(SP.distTo(FREEDOM) == Double.POSITIVE_INFINITY){
+      CatIsTrapped = true;
+    }
+		else{
+    CatEdge e = (CatEdge) SP.pathTo(FREEDOM).iterator().next();
 		s = e.other(s);
 		marked[v] = true;
+    }
 	}
-	public void startMarkTile(int row, int col){
+	private void startMarkTile(int row, int col){
 		marked[getIndex(row, col)] = true;
 		int v = getIndex(row, col);
 			for(Edge i : G.adj(v)){
@@ -71,6 +91,6 @@ public class CatGame{
 		return s == FREEDOM;
 	}
 	public boolean catIsTrapped(){
-		return SP.distTo(FREEDOM) == Double.POSITIVE_INFINITY;
+		return CatIsTrapped;
 	}
 }
