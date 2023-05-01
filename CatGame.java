@@ -1,13 +1,24 @@
 import edu.princeton.cs.algs4.DijkstraUndirectedSP;
 import edu.princeton.cs.algs4.EdgeWeightedGraph;
 import edu.princeton.cs.algs4.Edge;
+import java.util.Random;
 public class CatGame{
+  //The length of the board
 	private int n;
+  //The integer representation of the vertex the cat is trying to reach
 	private int FREEDOM;
+  //The integer representation of the vertex the cat is currently on
 	private int s;
+  //The array that stores what tiles have been marked
 	boolean[] marked;
 	EdgeWeightedGraph G;
 	DijkstraUndirectedSP SP;
+  /*
+  A CatGame is contructed as an n by n grid of vertices that constitute the board and an additional vertex that represents a successful escape.
+  The rows are offset to make a hexogonal like structure and the edges between them are constructed as follows:
+  All vertices not on the edge are connected to the nodes on their left and right as well as in the row above and below them.
+  Vertices not on the edge are also connected to two additional vertices whose integer representaion differs if they are in an odd or even row.
+  */
 	public CatGame(int n){
 		this.n = n;
 		FREEDOM = n*n;
@@ -21,6 +32,8 @@ public class CatGame{
 				G.addEdge(new CatEdge(v, v + 1));
 				G.addEdge(new CatEdge(v, v + n));
 				G.addEdge(new CatEdge(v, v - n));
+        G.addEdge(new CatEdge(v, v + n - 1));
+        G.addEdge(new CatEdge(v, v - n - 1));
 				marked[v] = false;
 			}
 		}
@@ -35,7 +48,15 @@ public class CatGame{
 			G.addEdge(new CatEdge(v, FREEDOM));
 			marked[v] = false;
 		}
-		SP = new DijkstraUndirectedSP(G, s);
+    /*
+    Random rand = new Random();
+    int numRand = rand.nextInt(n* n /2);
+    for(int i = 0; i < numRand; i++){
+      startMarkTile(rand.nextInt(n * n), rand.nextInt(n * n));
+  		
+    }
+    */
+    SP = new DijkstraUndirectedSP(G, s);
 	}
 	
 	public void markTile(int row, int col){

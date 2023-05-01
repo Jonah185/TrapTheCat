@@ -10,13 +10,6 @@ void setup() {
   size(300,300);
   cg = new CatGame(n);
   surface.setResizable(true);
-  /*
-  Random rand = new Random();
-  int numRand = rand.nextInt(n* n /2);
-  for(int i = 0; i < numRand; i++){
-    cg.startMarkTile(rand.nextInt(n * n), rand.nextInt(n * n));
-  }
-  */
 }
 
 void draw() {
@@ -51,5 +44,6 @@ void mouseClicked() {
   int[] catloc = cg.getCatTile();
   if (row < 0 || row > n || col < 0 || col > n) return;
   if (row == catloc[0] && col == catloc[1]) return;
+  if (cg.marked(row, col)) return;
   cg.markTile(row, col);
 }
