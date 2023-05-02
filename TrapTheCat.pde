@@ -10,22 +10,12 @@ void setup() {
   size(300,300);
   cg = new CatGame(n);
   surface.setResizable(true);
-  /*
-  Random rand = new Random();
-  int numRand = rand.nextInt(n* n /2);
-  for(int i = 0; i < numRand; i++){
-    cg.startMarkTile(rand.nextInt(n * n), rand.nextInt(n * n));
-  }
-  */
 }
 
 void draw() {
   int[] catLoc = cg.getCatTile();
   catRow = catLoc[0];
-  catCol = catLoc[1];
-  print(catRow + "," + catCol);
-  println();
-  
+  catCol = catLoc[1];  
   if (cg.catIsTrapped()) {
     background(0, 255, 0);
     return;

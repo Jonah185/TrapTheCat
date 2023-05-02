@@ -19,17 +19,11 @@ public class CatGame{
 		for(int row = 1; row < n-1; row++){
 			for(int col = 1; col < n-1; col++){
             int v = getIndex(row, col);
-            G.addEdge(new CatEdge(v, v - 1));
             G.addEdge(new CatEdge(v, v + 1));
             G.addEdge(new CatEdge(v, v + n));
-            G.addEdge(new CatEdge(v, v - n));
 			if(row % 2 == 0){			
 				G.addEdge(new CatEdge(v, v + n - 1));
 				G.addEdge(new CatEdge(v, v - n - 1));
-			}
-			else{
-				G.addEdge(new CatEdge(v, v + n + 1));
-				G.addEdge(new CatEdge(v, v - n + 1));
 			}
 			marked[v] = false;
 			}
@@ -60,10 +54,7 @@ public class CatGame{
 			c.changeWeight();
 		}
 		SP = new DijkstraUndirectedSP(G, s);
-    if(SP.distTo(FREEDOM) == Double.POSITIVE_INFINITY){
-      CatIsTrapped = true;
-    }
-		else{
+    if(!(SP.distTo(FREEDOM) == Double.POSITIVE_INFINITY)){
     CatEdge e = (CatEdge) SP.pathTo(FREEDOM).iterator().next();
 		s = e.other(s);
 		marked[v] = true;
@@ -91,6 +82,6 @@ public class CatGame{
 		return s == FREEDOM;
 	}
 	public boolean catIsTrapped(){
-		return CatIsTrapped;
+		return SP.distTo(FREEDOM) == Double.POSITIVE_INFINITY;
 	}
 }
