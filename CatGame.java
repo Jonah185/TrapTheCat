@@ -11,10 +11,12 @@ public class CatGame{
 	private int s;
   //The array that stores what tiles have been marked
 	private boolean[] marked;
+  //The boolean that stores whether the cat has been trapped or not
+	private boolean CatIsTrapped;
 	private EdgeWeightedGraph G;
 	private DijkstraUndirectedSP SP;
 	private Random rand;
-	private boolean CatIsTrapped;
+
   /*
   * A CatGame is contructed as an n by n grid of vertices that constitute the board and an additional vertex that represents a successful escape.
   * The rows are offset to make a hexogonal like structure and the edges between them are constructed as follows:
@@ -25,9 +27,9 @@ public class CatGame{
   *
   * Vertices on the edge are then connected to the "FREEDOM" vertex and only the "FREEDOM" vertex.
   * All connections from the inside out have already been made and the exterior vertices do not need to be connected to each other because
-  * the shortest path is always directly to the "FREEDOM" vertex
+  * the shortest path is always directly to the "FREEDOM" vertex.
   *
-  * Lastly, a random number of  random vertices from [0-n) are marked and a Shortest path with the starting vertex (n/2, n/2) as the source is created
+  * Lastly, a random number of  random vertices from [0-n) are marked without moving the cat.
   */
 	public CatGame(int n){
 		this.n = n;
@@ -69,7 +71,7 @@ public class CatGame{
 		for(int i = 0; i < n; i ++){
 			int row = rand.nextInt(n); int col = rand.nextInt(n);
 			int v = getIndex(row, col);
-			if(!(v == s)){
+			if(v != s){
 				for(Edge e : G.adj(v)){
 					CatEdge c = (CatEdge) e;
 					c.changeWeight();
@@ -78,7 +80,6 @@ public class CatGame{
 				}
 		}
 	}
-
 	/*
 	 * Takes two ints for row and column as parameters, marks the corresponding vertex, checks if the cat has been trapped, and moves the cat along the newly created shortest path. 
 	 * between it's current location and the "FREEDOM" vertex. Marking a vertex has two steps:
@@ -89,7 +90,7 @@ public class CatGame{
 	 * Then, the cat is moved by constructing the new shortest path tree and setting the cat's position to be the other vertex of the first edge of the shortest
 	 * path between s and the "FREEDOM" vertex.
 	 * 
-	 * However, if the shortest path to FREEDOM has a weight of infinity it will declare the cat trapped and not move the cat.
+	 * However, if the shortest path to FREEDOM has a weight of infinity it will move the cat along it's first non-infinity edge
 	 */
 	public void markTile(int row, int col){
 		int v = getIndex(row, col);
@@ -98,16 +99,21 @@ public class CatGame{
 			c.changeWeight();
 		}
 		SP = new DijkstraUndirectedSP(G, s);
-    	if(SP.distTo(FREEDOM) == Double.POSITIVE_INFINITY){
-     		CatIsTrapped = true;
-    	}
-		else{
+    	if(SP.distTo(FREEDOM) != Double.POSITIVE_INFINITY){
     		CatEdge e = (CatEdge) SP.pathTo(FREEDOM).iterator().next();
 			s = e.other(s);
-			marked[v] = true;
     	}
+		else{
+			for(Edge i : G.adj(s)){
+				CatEdge c = (CatEdge) i;
+				if(c.weight() != Double.POSITIVE_INFINITY){
+					s = c.other(s);
+					break;
+				}
+			}
+		}
+		marked[v] = true;
 	}
-
 	/*
 	 * Takes two ints as parameteres for the row and column and returns the corresponing index of the marked array.
 	 */
@@ -134,9 +140,13 @@ public class CatGame{
 		return s == FREEDOM;
 	}
 	/*
-	 * Returns the global variable CatIsTrapped
+	 * Returns true if all edges of the source vertex have a weight of infinity and false otherwise
 	 */
 	public boolean catIsTrapped(){
-		return CatIsTrapped;
+		for(Edge i : G.adj(s)){
+			CatEdge c = (CatEdge) i;
+			if(c.weight() != Double.POSITIVE_INFINITY) return false;
+		}
+		return true;
 	}
 }
