@@ -16,8 +16,6 @@ void draw() {
   int[] catLoc = cg.getCatTile();
   catRow = catLoc[0];
   catCol = catLoc[1];
-  print(catRow + "," + catCol);
-  println();
   
   if (cg.catIsTrapped()) {
     background(0, 255, 0);
