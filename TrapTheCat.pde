@@ -15,7 +15,8 @@ void setup() {
 void draw() {
   int[] catLoc = cg.getCatTile();
   catRow = catLoc[0];
-  catCol = catLoc[1];  
+  catCol = catLoc[1];
+  
   if (cg.catIsTrapped()) {
     background(0, 255, 0);
     return;
@@ -43,5 +44,6 @@ void mouseClicked() {
   int[] catloc = cg.getCatTile();
   if (row < 0 || row > n || col < 0 || col > n) return;
   if (row == catloc[0] && col == catloc[1]) return;
+  if (cg.marked(row, col)) return;
   cg.markTile(row, col);
 }
